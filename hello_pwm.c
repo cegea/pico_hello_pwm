@@ -12,16 +12,16 @@ typedef struct
 
 uint32_t pwm_set_freq_duty(uint slice_num, uint chan, float frequency, int duty_cycle)
 {
-    if (frequency == 0) return 0;  // Evita la división por cero
+    if (frequency == 0) return 0;  // Div by 0 control
 
-    float clock = 125.0e6f;  // Frecuencia del reloj base (125 MHz)
+    float clock = 125.0e6f;  // Clock base (125 MHz)
     float divider = clock / (4096.f * frequency);
 
     if (divider < 1.f) divider = 1.f;
     else if (divider > 256.f) divider = 256.f;
 
     uint32_t wrap = (uint32_t)((clock / divider) / frequency) - 1;
-    if (wrap > 65535) wrap = 65535;  // Ajuste para valores válidos
+    if (wrap > 65535) wrap = 65535;  // Limit values
 
     float level = (float)wrap * ((float)duty_cycle / 100.f);
 
@@ -62,8 +62,8 @@ int main()
     pwm_set_enabled(green.slice, true);
     pwm_set_enabled(red.slice, true);
 
-    int step = 2; // Incremento del duty cycle en cada iteración
-    int delay_ms = 10; // Delay entre cada actualización para suavizar la animación
+    int step = 2;
+    int delay_ms = 10; // Delay between steps
 
     while (1) 
     {
